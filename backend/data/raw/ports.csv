@@ -1,0 +1,8 @@
+port_id,port_name,country,max_loa_m,max_beam_m,max_draft_m,cargo_handling_rate_tph,berth_count,approach_depth_m,baseline_congestion_index,source
+Paradip,Paradip Port Authority,India,300,46,16.0,3000,8,18.7,0.35,OFFICIAL_PORT_DATA
+Visakhapatnam,Visakhapatnam Port Authority,India,240,36,14.5,2500,6,17.0,0.35,OFFICIAL_PORT_DATA
+Gangavaram,Gangavaram Port,India,300,45,18.0,4000,4,18.5,0.3,PROTOTYPE_ESTIMATE_VERIFY_WITH_PORT
+Gopalpur,Gopalpur Port,India,300,40,14.0,2500,3,15.0,0.35,PROTOTYPE_ESTIMATE_VERIFY_WITH_PORT
+Dhamra,Dhamra Port,India,300,45,18.0,4000,5,18.5,0.3,PROTOTYPE_ESTIMATE_VERIFY_WITH_PORT
+Sagar_Sandheads,Sagar Sandheads,India,280,42,14.0,1800,3,15.0,0.45,PROTOTYPE_ESTIMATE_VERIFY_WITH_PORT
+Haldia,Haldia Dock Complex,India,230,33,10.5,1800,5,12.0,0.5,PROTOTYPE_ESTIMATE_VERIFY_WITH_PORT

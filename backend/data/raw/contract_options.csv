@@ -1,0 +1,5 @@
+contract_id,contract_type,duration_months,min_quantity_mt,max_quantity_mt,rate_premium_discount,availability,source
+SPOT,Spot,0,0,2000000,0.0,Flexible,PROTOTYPE_CONTRACT_RULE
+ST_1M,Short_Term,1,300000,2500000,0.04,Medium,PROTOTYPE_CONTRACT_RULE
+ST_3M,Short_Term,3,600000,5000000,0.02,Medium,PROTOTYPE_CONTRACT_RULE
+MT_6M,Medium_Term,6,1000000,10000000,-0.03,Lower,PROTOTYPE_CONTRACT_RULE
