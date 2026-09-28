@@ -9,7 +9,7 @@ async function request<T>(endpoint: string): Promise<T> {
     )
   }
 
-  return response.json()
+  return response.json() as Promise<T>
 }
 
 export const api = {
