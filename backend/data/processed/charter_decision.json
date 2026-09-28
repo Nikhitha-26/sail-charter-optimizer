@@ -1,0 +1,44 @@
+{
+  "decision": {
+    "strategy": "MEDIUM_TERM / MULTI-VOYAGE",
+    "contract_duration_months": 6,
+    "contract_terms": {
+      "contract_id": "MT_6M",
+      "contract_type": "Medium_Term",
+      "duration_months": 6,
+      "min_quantity_mt": 1000000.0,
+      "max_quantity_mt": 10000000.0,
+      "rate_adjustment": -0.03,
+      "availability": "Lower"
+    },
+    "reason": "Moderate scenario spread supports multi-voyage coverage while retaining flexibility."
+  },
+  "market": {
+    "base_freight_usd_per_mt": 33.07,
+    "low_freight_usd_per_mt": 30.92,
+    "high_freight_usd_per_mt": 35.0,
+    "scenario_spread_pct": 12.34,
+    "risk_level": "MEDIUM"
+  },
+  "optimization": {
+    "total_required_mt": 11957823.0,
+    "total_allocated_mt": 11957823.0,
+    "shortage_mt": 0.0,
+    "fulfillment_pct": 100.0,
+    "total_base_cost_usd": 454000649.51,
+    "high_scenario_exposure_usd": 24092053.93,
+    "deadline_infeasible_cargoes": 18,
+    "vessel_mix": {
+      "Panamax": 4707720.0,
+      "Capesize": 4130732.0,
+      "Supramax": 3119371.0
+    }
+  },
+  "explanations": [
+    "Base freight scenario is $33.07/MT, with LOW $30.92/MT and HIGH $35.00/MT.",
+    "Scenario spread is 12.34%, classified as MEDIUM market risk.",
+    "The allocation covers 100.00% of the modeled cargo requirement.",
+    "18 cargo requirements have at least one deadline-feasibility issue in the current schedule.",
+    "The allocation uses feasible vessel types: Panamax, Capesize, Supramax."
+  ]
+}

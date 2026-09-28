@@ -1,0 +1,2 @@
+strategy,contract_duration_months,risk_level,base_freight_usd_per_mt,low_freight_usd_per_mt,high_freight_usd_per_mt,scenario_spread_pct,total_required_mt,total_allocated_mt,shortage_mt,fulfillment_pct,total_base_cost_usd,high_scenario_exposure_usd,deadline_infeasible_cargoes,vessel_types
+MEDIUM_TERM / MULTI-VOYAGE,6,MEDIUM,33.07063684246148,30.92311664246148,35.00215334246148,12.33914815834257,11957823.0,11957823.0,0.0,100.0,454000649.51140004,24092053.934070013,18,"Panamax, Capesize, Supramax"

@@ -35,8 +35,8 @@ def load_ports():
 def load_cargo_requirements():
     df = pd.read_csv(RAW_DATA_DIR / "cargo_requirements.csv")
 
-    df["start_date"] = pd.to_datetime(df["start_date"])
-    df["end_date"] = pd.to_datetime(df["end_date"])
+    df["earliest_arrival"] = pd.to_datetime(df["earliest_arrival"])
+    df["required_by"] = pd.to_datetime(df["required_by"])
 
     return df
 
