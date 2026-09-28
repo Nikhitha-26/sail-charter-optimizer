@@ -1,16 +1,141 @@
 @import "tailwindcss";
 
+/* ---------- Theme tokens ---------- */
+
+:root.light {
+  --bg-primary: #f5f2eb;
+  --bg-secondary: #eeebe3;
+  --bg-card: #faf8f3;
+  --bg-elevated: #ffffff;
+  --bg-muted: #f3efe6;
+  --bg-hover: #e5e1d8;
+  --bg-active: #dedbd1;
+  --bg-banner: #f3ebe0;
+  --bg-map: #eef4f1;
+  --bg-ocean: #e8f0ee;
+  --bg-ocean-deep: #d9e8e4;
+  --bg-land: #ddd6c8;
+  --bg-input: #ffffff;
+  --bg-drawer: #fffdf8;
+  --bg-modal-scrim: rgba(40, 36, 28, 0.35);
+  --bg-skeleton-a: #ebe6dc;
+  --bg-skeleton-b: #f5f2eb;
+
+  --text-primary: #292824;
+  --text-secondary: #716d65;
+  --text-muted: #9a958b;
+  --text-faint: #a09b91;
+  --text-on-accent: #faf8f3;
+
+  --border-subtle: #e4dfd5;
+  --border-card: #e2ddd3;
+  --border-strong: #d4cfc4;
+  --border-brand: #bbb5a8;
+  --border-coast: #b8b09f;
+  --border-coast-soft: #a89f8e;
+
+  --accent: #3d4a3c;
+  --accent-hover: #2f3a2e;
+  --accent-soft: #e8eee6;
+  --accent-link: #3d5a45;
+  --accent-chart: #3d5a45;
+  --accent-bar: #4a5d4c;
+
+  --status-online: #64735f;
+  --status-offline: #a0452e;
+
+  --risk-low-bg: #e4ece3;
+  --risk-low-fg: #3d5a45;
+  --risk-med-bg: #f5edd8;
+  --risk-med-fg: #8a6a12;
+  --risk-high-bg: #f0e0db;
+  --risk-high-fg: #8a3a28;
+
+  --chart-grid: #e4dfd5;
+  --chart-tick: #8a857a;
+  --chart-line: #5a554c;
+  --chart-band: #c4b59a;
+  --chart-low: #8a9a7a;
+  --chart-high: #a0452e;
+  --map-label: #4a463e;
+  --map-region: #8a857a;
+  --map-ocean-label: #7a9a92;
+  --map-dot-stroke: #faf8f3;
+}
+
+:root.dark {
+  --bg-primary: #0f1215;
+  --bg-secondary: #12161b;
+  --bg-card: #161a1f;
+  --bg-elevated: #1c2128;
+  --bg-muted: #1a1f26;
+  --bg-hover: #222830;
+  --bg-active: #2a313a;
+  --bg-banner: #1a1814;
+  --bg-map: #141a1e;
+  --bg-ocean: #152028;
+  --bg-ocean-deep: #1a2830;
+  --bg-land: #2a3038;
+  --bg-input: #1c2128;
+  --bg-drawer: #1a1f26;
+  --bg-modal-scrim: rgba(0, 0, 0, 0.55);
+  --bg-skeleton-a: #1c2128;
+  --bg-skeleton-b: #262a30;
+
+  --text-primary: #e5e5e5;
+  --text-secondary: #b0b0b0;
+  --text-muted: #8a9099;
+  --text-faint: #6e7580;
+  --text-on-accent: #0f1215;
+
+  --border-subtle: #262a30;
+  --border-card: #2a3038;
+  --border-strong: #3a4048;
+  --border-brand: #3a4048;
+  --border-coast: #4a5560;
+  --border-coast-soft: #3d4650;
+
+  --accent: #6a8f7a;
+  --accent-hover: #7aa38a;
+  --accent-soft: #1e2a24;
+  --accent-link: #8fb89a;
+  --accent-chart: #7aa38a;
+  --accent-bar: #6a8f7a;
+
+  --status-online: #6a8f7a;
+  --status-offline: #c46a55;
+
+  --risk-low-bg: #1e2a24;
+  --risk-low-fg: #8fb89a;
+  --risk-med-bg: #2a2418;
+  --risk-med-fg: #d4a84b;
+  --risk-high-bg: #2a1c1a;
+  --risk-high-fg: #d4886e;
+
+  --chart-grid: #2a3038;
+  --chart-tick: #8a9099;
+  --chart-line: #c8c4bc;
+  --chart-band: #4a5560;
+  --chart-low: #6a8f7a;
+  --chart-high: #d4886e;
+  --map-label: #c8c4bc;
+  --map-region: #8a9099;
+  --map-ocean-label: #6a8a92;
+  --map-dot-stroke: #161a1f;
+}
+
 :root {
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
 
-  color: #292824;
-  background: #f5f2eb;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: light dark;
 }
 
 * {
@@ -18,14 +143,15 @@
 }
 
 html {
-  background: #f5f2eb;
+  background: var(--bg-primary);
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #f5f2eb;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 button,

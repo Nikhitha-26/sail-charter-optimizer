@@ -24,7 +24,7 @@ export default function Topbar() {
 
       <div className="topbar-meta">
         <span>East Coast India</span>
-        <span className="date">27 Sep 2026</span>
+        <span className="date">28 Sep 2026</span>
       </div>
     </header>
   )
