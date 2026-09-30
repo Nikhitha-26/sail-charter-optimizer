@@ -1,8 +1,11 @@
-from fastapi import FastAPI, HTTPException
+"""backend/api/app.py FastAPI application"""
+
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import pandas as pd
 import json
+import traceback
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -23,6 +26,85 @@ CONTRACTS_PATH = RAW_DIR / "contract_options.csv"
 CARGO_PATH = RAW_DIR / "cargo_requirements.csv"
 VOYAGES_PATH = RAW_DIR / "voyages.csv"
 
+def get_dynamic_forecast(
+    origin: str,
+    destination: str,
+    vessel_type: str,
+    commodity: str,
+    horizon: int,
+):
+    """
+    Generate a forecast for the user-selected trade lane.
+    Uses the existing recursive XGBoost forecasting engine.
+    """
+
+    try:
+        # Import lazily so the model is only loaded when forecasting is requested.
+        from backend.ml.multi_horizon_forecast import (
+            forecast_route,
+            historical_df,
+        )
+
+        forecast = forecast_route(
+            historical_df,
+            origin=origin,
+            destination=destination,
+            vessel_type=vessel_type,
+            commodity=commodity,
+            horizon=horizon,
+        )
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        )
+
+    except Exception as exc:
+        print("\n========== FORECAST ERROR ==========")
+        print(f"Error type: {type(exc).__name__}")
+        print(f"Error message: {exc}")
+        traceback.print_exc()
+        print("====================================\n")
+
+        raise HTTPException(
+            status_code=500,
+            detail=f"Forecast generation failed: {str(exc)}",
+        )
+
+    errors = pd.read_csv(ERROR_PATH)
+
+    error_values = dict(
+        zip(
+            errors["statistic"],
+            errors["value"],
+        )
+    )
+
+    p10 = float(error_values["P10"])
+    p50 = float(error_values["P50"])
+    p90 = float(error_values["P90"])
+
+    forecast["base_forecast"] = forecast["forecast_freight_rate"]
+
+    forecast["low_scenario"] = (
+        forecast["base_forecast"] + p10
+    ).clip(lower=0)
+
+    forecast["base_scenario"] = (
+        forecast["base_forecast"] + p50
+    ).clip(lower=0)
+
+    forecast["high_scenario"] = (
+        forecast["base_forecast"] + p90
+    ).clip(lower=0)
+
+    forecast["scenario_spread"] = (
+        forecast["high_scenario"]
+        - forecast["low_scenario"]
+    )
+
+    return forecast
 
 app = FastAPI(
     title="SAIL Intelligent Freight Forecasting API",
@@ -80,17 +162,31 @@ def decision():
         return json.load(f)
 
 @app.get("/api/forecast")
-def forecast():
-    df = pd.read_csv(SCENARIO_PATH)
+def get_forecast(
+    origin: str = Query(...),
+    destination: str = Query(...),
+    vessel_type: str = Query(...),
+    commodity: str = Query("Coal"),
+    horizon: int = Query(90, ge=1, le=90),
+):
+    forecast = get_dynamic_forecast(
+        origin=origin,
+        destination=destination,
+        vessel_type=vessel_type,
+        commodity=commodity,
+        horizon=horizon,
+    )
 
     return {
         "route": {
-            "origin": "Newcastle_Australia",
-            "destination": "Paradip",
-            "vessel_type": "Capesize",
-            "commodity": "Coal",
+            "origin": origin,
+            "destination": destination,
+            "vessel_type": vessel_type,
+            "commodity": commodity,
         },
-        "forecast": df.to_dict(orient="records"),
+        "forecast": forecast.to_dict(
+            orient="records"
+        ),
     }
 
 

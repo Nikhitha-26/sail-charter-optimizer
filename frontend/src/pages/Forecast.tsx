@@ -1,3 +1,7 @@
+import {
+  formatINRPerTonne,
+} from '../lib/currency'
+
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Area,
@@ -61,12 +65,22 @@ export default function Forecast() {
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
+  
     try {
       const [f, p, portsRes] = await Promise.all([
-        api.forecast() as Promise<ForecastData>,
+        api.forecast({
+          origin: ctx.origin,
+          destination: ctx.destination,
+          vesselType: ctx.vesselType,
+          commodity: ctx.commodity,
+          horizon: form.horizon,
+        }) as Promise<ForecastData>,
+  
         api.modelPerformance() as Promise<ModelPerformance>,
+  
         api.ports() as Promise<PortsResponse>,
       ])
+  
       setForecast(f)
       setPerformance(p)
       setPorts(portsRes.ports ?? [])
@@ -75,7 +89,7 @@ export default function Forecast() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [ctx.origin, ctx.destination, ctx.vesselType, ctx.commodity, form.horizon])
 
   useEffect(() => {
     void load()
@@ -105,26 +119,46 @@ export default function Forecast() {
     }
   }, [chartData])
 
-  const apply = () => {
-    ctx.setContext({
-      origin: form.origin,
-      destination: form.destination,
-      vesselType: form.vesselType,
-      commodity: form.commodity,
-    })
-    // Backend currently serves Newcastle→Paradip Capesize Coal only
-    const matchesBackend =
-      form.origin === 'Newcastle_Australia' &&
-      form.destination === 'Paradip' &&
-      form.vesselType === 'Capesize' &&
-      form.commodity === 'Coal'
-
-    if (!matchesBackend) {
+  const apply = async () => {
+    setLoading(true)
+    setError(null)
+    setAppliedNote(null)
+  
+    try {
+      const forecastResult = await api.forecast({
+        origin: form.origin,
+        destination: form.destination,
+        vesselType: form.vesselType,
+        commodity: form.commodity,
+        horizon: form.horizon,
+      }) as ForecastData
+  
+      setForecast(forecastResult)
+  
+      ctx.setContext({
+        origin: form.origin,
+        destination: form.destination,
+        vesselType: form.vesselType,
+        commodity: form.commodity,
+      })
+  
       setAppliedNote(
-        `Showing Newcastle→Paradip Capesize Coal forecast (backend prototype). Horizon set to ${form.horizon}d. Selected route stored in decision context.`,
+        `Forecast generated for ${form.origin.replace(
+          /_/g,
+          ' ',
+        )} → ${form.destination.replace(
+          /_/g,
+          ' ',
+        )} • ${form.vesselType} • ${form.horizon} days.`,
       )
-    } else {
-      setAppliedNote(`Horizon updated to ${form.horizon} days.`)
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to generate forecast',
+      )
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -264,23 +298,23 @@ export default function Forecast() {
           <div className="metric-row">
             <div className="metric-card">
               <span>Current</span>
-              <strong>${metrics.current.toFixed(2)}</strong>
-              <small>USD / MT</small>
+              <strong>{formatINRPerTonne(metrics.current)}</strong>
+              <small>INR / MT</small>
             </div>
             <div className="metric-card">
               <span>{form.horizon}D Base</span>
-              <strong>${metrics.base.toFixed(2)}</strong>
-              <small>avg USD / MT</small>
+              <strong>{formatINRPerTonne(metrics.base)}</strong>
+              <small>avg INR / MT</small>
             </div>
             <div className="metric-card">
               <span>Low</span>
-              <strong>${metrics.low.toFixed(2)}</strong>
-              <small>avg USD / MT</small>
+              <strong>{formatINRPerTonne(metrics.low)}</strong>
+              <small>avg INR / MT</small>
             </div>
             <div className="metric-card">
               <span>High</span>
-              <strong>${metrics.high.toFixed(2)}</strong>
-              <small>avg USD / MT</small>
+              <strong>{formatINRPerTonne(metrics.high)}</strong>
+              <small>avg INR / MT</small>
             </div>
           </div>
         )}
@@ -299,20 +333,25 @@ export default function Forecast() {
                   minTickGap={28}
                 />
                 <YAxis
-                  tick={{ fontSize: 10, fill: '#8a857a' }}
-                  domain={['auto', 'auto']}
-                  width={42}
-                />
+  tick={{ fontSize: 10, fill: '#8a857a' }}
+  domain={['auto', 'auto']}
+  width={60}
+  tickFormatter={(value: number) =>
+    `₹${(value * 93).toFixed(0)}`
+  }
+/>
                 <Tooltip
-                  contentStyle={{
-                    background: '#faf8f3',
-                    border: '1px solid #e2ddd3',
-                    fontSize: 12,
-                  }}
-                  formatter={(value) =>
-                    typeof value === 'number' ? `$${value.toFixed(2)}` : String(value ?? '')
-                  }
-                />
+  contentStyle={{
+    background: '#faf8f3',
+    border: '1px solid #e2ddd3',
+    fontSize: 12,
+  }}
+  formatter={(value) =>
+    typeof value === 'number'
+      ? formatINRPerTonne(value)
+      : String(value ?? '')
+  }
+/>
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Area
                   type="monotone"

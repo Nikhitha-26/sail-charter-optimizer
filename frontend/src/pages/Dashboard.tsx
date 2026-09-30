@@ -1,3 +1,5 @@
+/**frontend/src/pages/Dashboard.tsx Dashboard page*/
+import { formatINRPerTonne } from '../lib/currency'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, Map } from 'lucide-react'
@@ -89,28 +91,29 @@ export default function Dashboard() {
       <div className="metric-row">
         <div className="metric-card">
           <span>Current Freight</span>
-          <strong>${data.current_rate.toFixed(2)}</strong>
-          <small>USD / MT</small>
+          <strong>{formatINRPerTonne(data.current_rate)}</strong>
+          <small>INR / MT</small>
         </div>
         <div className="metric-card">
           <span>30-Day Forecast</span>
-          <strong>${data.forecast_30d.toFixed(2)}</strong>
-          <small>USD / MT</small>
+          <strong>{formatINRPerTonne(data.forecast_30d)}</strong>
+          <small>INR / MT</small>
         </div>
         <div className="metric-card">
           <span>LOW / HIGH</span>
           <strong>
-            ${data.low_scenario.toFixed(2)} / ${data.high_scenario.toFixed(2)}
-          </strong>
-          <small>USD / MT</small>
+  {formatINRPerTonne(data.low_scenario)} /{' '}
+  {formatINRPerTonne(data.high_scenario)}
+</strong>
+<small>INR / MT</small>
         </div>
         <div className="metric-card">
           <span>Scenario Spread</span>
           <strong>
-            {decision
-              ? `${decision.market.scenario_spread_pct.toFixed(1)}%`
-              : `$${data.scenario_spread.toFixed(2)}`}
-          </strong>
+  {decision
+    ? `${decision.market.scenario_spread_pct.toFixed(1)}%`
+    : formatINRPerTonne(data.scenario_spread)}
+</strong>
           <small>{decision ? 'of base rate' : 'USD / MT'}</small>
         </div>
         <div className="metric-card">

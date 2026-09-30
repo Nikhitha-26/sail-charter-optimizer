@@ -1,3 +1,8 @@
+/**frontend/src/pages/Decisions.tsx Decisions page*/
+import {
+  formatINR,
+  formatINRPerTonne,
+} from '../lib/currency'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -198,13 +203,12 @@ export default function Decisions() {
           <dl className="cost-dl">
             <div>
               <dt>Base cost</dt>
-              <dd>${Math.round(strategy.baseCostUsd).toLocaleString()}</dd>
+              <dd>{formatINR(strategy.baseCostUsd)}</dd>
             </div>
             <div>
               <dt>Low / High</dt>
               <dd>
-                ${Math.round(strategy.lowCostUsd).toLocaleString()} / $
-                {Math.round(strategy.highCostUsd).toLocaleString()}
+                {formatINR(strategy.lowCostUsd)} / {formatINR(strategy.highCostUsd)}
               </dd>
             </div>
           </dl>
@@ -227,19 +231,18 @@ export default function Decisions() {
           <div className="metric-row compact">
             <div className="metric-card">
               <span>Base freight</span>
-              <strong>${market.base_freight_usd_per_mt.toFixed(2)}</strong>
-              <small>USD / MT</small>
+              <strong>{formatINRPerTonne(market.base_freight_usd_per_mt)}</strong>
+              <small>INR / MT</small>
             </div>
             <div className="metric-card">
               <span>LOW / HIGH</span>
               <strong>
-                ${market.low_freight_usd_per_mt.toFixed(2)} / $
-                {market.high_freight_usd_per_mt.toFixed(2)}
+                {formatINRPerTonne(market.low_freight_usd_per_mt)} / {formatINRPerTonne(market.high_freight_usd_per_mt)}
               </strong>
             </div>
             <div className="metric-card">
               <span>Spread</span>
-              <strong>{market.scenario_spread_pct.toFixed(2)}%</strong>
+              <strong>{market.scenario_spread_pct.toFixed(1)}%</strong>
             </div>
             <div className="metric-card">
               <span>Risk</span>
@@ -250,7 +253,7 @@ export default function Decisions() {
             {dashboard && (
               <div className="metric-card">
                 <span>30D forecast</span>
-                <strong>${dashboard.forecast_30d.toFixed(2)}</strong>
+                <strong>{formatINRPerTonne(dashboard.forecast_30d)}</strong>
               </div>
             )}
           </div>
@@ -312,7 +315,7 @@ export default function Decisions() {
             <div className="metric-card">
               <span>High exposure</span>
               <strong>
-                ${optimization.high_scenario_exposure_usd.toLocaleString()}
+                {formatINR(optimization.high_scenario_exposure_usd)}
               </strong>
             </div>
           </div>

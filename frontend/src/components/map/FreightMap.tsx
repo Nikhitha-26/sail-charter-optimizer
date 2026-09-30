@@ -1,19 +1,89 @@
+/**
+ * frontend/src/components/map/FreightMap.tsx
+ * Google Maps freight trade-lane map component
+ */
+
 import { useMemo, useState } from 'react'
+import {
+  APIProvider,
+  Map as GoogleMap,
+  AdvancedMarker,
+  InfoWindow,
+  Polyline,
+} from '@vis.gl/react-google-maps'
+
 import type { Port, RiskLevel } from '../../types/api'
 import { congestionToRisk, riskColor } from '../../lib/constants'
 
-/** Approximate SVG coordinates for prototype trade-lane map (viewBox 0 0 640 420). */
-const PORT_COORDS: Record<string, { x: number; y: number; label: string }> = {
-  Newcastle_Australia: { x: 560, y: 310, label: 'Newcastle' },
-  Gladstone_Australia: { x: 545, y: 275, label: 'Gladstone' },
-  Hay_Point_Australia: { x: 535, y: 255, label: 'Hay Point' },
-  Haldia: { x: 195, y: 95, label: 'Haldia' },
-  Sagar_Sandheads: { x: 205, y: 110, label: 'Sagar' },
-  Dhamra: { x: 215, y: 145, label: 'Dhamra' },
-  Paradip: { x: 220, y: 165, label: 'Paradip' },
-  Gopalpur: { x: 218, y: 190, label: 'Gopalpur' },
-  Gangavaram: { x: 210, y: 225, label: 'Gangavaram' },
-  Visakhapatnam: { x: 205, y: 245, label: 'Vizag' },
+/**
+ * Real geographic coordinates for the prototype ports.
+ *
+ * These are used only for visualization of the trade lane.
+ * They are not navigational coordinates.
+ */
+const PORT_COORDS: Record<
+  string,
+  { lat: number; lng: number; label: string }
+> = {
+  Newcastle_Australia: {
+    lat: -32.9283,
+    lng: 151.7817,
+    label: 'Newcastle',
+  },
+
+  Gladstone_Australia: {
+    lat: -23.8427,
+    lng: 151.2555,
+    label: 'Gladstone',
+  },
+
+  Hay_Point_Australia: {
+    lat: -21.2947,
+    lng: 149.3039,
+    label: 'Hay Point',
+  },
+
+  Haldia: {
+    lat: 22.0257,
+    lng: 88.0583,
+    label: 'Haldia',
+  },
+
+  Sagar_Sandheads: {
+    lat: 21.6507,
+    lng: 88.025,
+    label: 'Sagar',
+  },
+
+  Dhamra: {
+    lat: 20.7844,
+    lng: 86.9367,
+    label: 'Dhamra',
+  },
+
+  Paradip: {
+    lat: 20.2644,
+    lng: 86.7025,
+    label: 'Paradip',
+  },
+
+  Gopalpur: {
+    lat: 19.2667,
+    lng: 84.9167,
+    label: 'Gopalpur',
+  },
+
+  Gangavaram: {
+    lat: 17.6306,
+    lng: 83.2197,
+    label: 'Gangavaram',
+  },
+
+  Visakhapatnam: {
+    lat: 17.6868,
+    lng: 83.2185,
+    label: 'Vizag',
+  },
 }
 
 const INDIA_PORTS = [
@@ -38,15 +108,47 @@ interface FreightMapProps {
   className?: string
 }
 
-function quadraticPath(
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number,
-): string {
-  const cx = (x1 + x2) / 2
-  const cy = Math.min(y1, y2) - 55
-  return `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`
+function getPortCoords(portId: string) {
+  return PORT_COORDS[portId]
+}
+
+function createTradeLane(
+  origin: { lat: number; lng: number },
+  destination: { lat: number; lng: number },
+) {
+  /**
+   * We deliberately draw our own ocean trade lane instead of using
+   * Google Directions/Routes because this is a maritime route.
+   *
+   * The intermediate points create a visually natural Indian Ocean
+   * trade corridor rather than a road-navigation route.
+   */
+
+  const midLat = (origin.lat + destination.lat) / 2
+  const midLng = (origin.lng + destination.lng) / 2
+
+  return [
+    {
+      lat: origin.lat,
+      lng: origin.lng,
+    },
+    {
+      lat: origin.lat + (midLat - origin.lat) * 0.45,
+      lng: origin.lng + (midLng - origin.lng) * 0.25,
+    },
+    {
+      lat: midLat + 2,
+      lng: midLng,
+    },
+    {
+      lat: destination.lat + (midLat - destination.lat) * 0.45,
+      lng: destination.lng + (midLng - destination.lng) * 0.25,
+    },
+    {
+      lat: destination.lat,
+      lng: destination.lng,
+    },
+  ]
 }
 
 export default function FreightMap({
@@ -63,201 +165,198 @@ export default function FreightMap({
   const [hoverId, setHoverId] = useState<string | null>(null)
 
   const portById = useMemo(() => {
-    const map = new Map<string, Port>()
-    for (const p of ports) map.set(p.port_id, p)
+    const map = new globalThis.Map<string, Port>()
+
+    for (const p of ports) {
+      map.set(p.port_id, p)
+    }
+
     return map
   }, [ports])
 
-  const originPt = PORT_COORDS[origin] ?? PORT_COORDS.Newcastle_Australia
-  const destPt = PORT_COORDS[destination] ?? PORT_COORDS.Paradip
+  const originPt =
+    getPortCoords(origin) ?? getPortCoords('Newcastle_Australia')
+
+  const destPt =
+    getPortCoords(destination) ?? getPortCoords('Paradip')
+
   const laneColor = riskColor(riskLevel)
-  const highlightSet = highlightedPortIds ? new Set(highlightedPortIds) : null
+
+  const highlightSet = highlightedPortIds
+    ? new Set(highlightedPortIds)
+    : null
 
   const hoverPort = hoverId ? portById.get(hoverId) : null
-  const hoverCoord = hoverId ? PORT_COORDS[hoverId] : null
+  const hoverCoord = hoverId ? getPortCoords(hoverId) : null
+
+  const tradeLane = useMemo(
+    () => createTradeLane(originPt, destPt),
+    [originPt, destPt],
+  )
+
+  const mapCenter = useMemo(
+    () => ({
+      lat: (originPt.lat + destPt.lat) / 2,
+      lng: (originPt.lng + destPt.lng) / 2,
+    }),
+    [originPt, destPt],
+  )
+
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+
+  if (!apiKey) {
+    return (
+      <div className={`freight-map ${compact ? 'compact' : ''} ${className}`}>
+        <div className="map-error">
+          <strong>Google Maps API key missing</strong>
+          <p>
+            Add VITE_GOOGLE_MAPS_API_KEY to frontend/.env and restart
+            the Vite development server.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className={`freight-map ${compact ? 'compact' : ''} ${className}`}>
-      <svg
-        viewBox="0 0 640 420"
-        role="img"
-        aria-label="Prototype trade-lane map Australia to East Coast India"
-      >
-        {/* Ocean wash */}
-        <rect x="0" y="0" width="640" height="420" fill="#e8f0ee" />
+    <div
+      className={`freight-map ${compact ? 'compact' : ''} ${className}`}
+    >
+      <APIProvider apiKey={apiKey}>
+      <GoogleMap
+        defaultCenter={mapCenter}
+      defaultZoom={3}
+      mapId="DEMO_MAP_ID"
+      gestureHandling="greedy"
+      disableDefaultUI={false}
+      mapTypeControl={false}
+      streetViewControl={false}
+      fullscreenControl={true}
+      zoomControl={true}
+      style={{
+        width: '100%',
+        height: compact ? '320px' : '460px',
+        borderRadius: '12px',
+      }}>
+          {/* Main ocean freight lane */}
+          <Polyline
+            path={tradeLane}
+            strokeColor={laneColor}
+            strokeOpacity={0.9}
+            strokeWeight={compact ? 3 : 4}
+            geodesic={true}
+          />
 
-        {/* Stylized Indian Ocean / Bay of Bengal */}
-        <ellipse cx="320" cy="220" rx="280" ry="160" fill="#d9e8e4" opacity="0.7" />
-
-        {/* Australia (simplified east coast focus) */}
-        <path
-          d="M 480 180
-             C 500 160, 540 170, 570 200
-             C 590 230, 600 280, 585 330
-             C 570 370, 530 380, 500 360
-             C 470 340, 460 290, 465 250
-             C 468 220, 470 195, 480 180 Z"
-          fill="#ddd6c8"
-          stroke="#b8b09f"
-          strokeWidth="1.2"
-        />
-
-        {/* East India landmass (simplified) */}
-        <path
-          d="M 120 40
-             C 160 50, 190 70, 200 100
-             C 210 140, 225 180, 220 220
-             C 215 270, 200 310, 175 340
-             C 150 360, 110 350, 95 320
-             C 85 280, 90 220, 95 160
-             C 100 100, 105 60, 120 40 Z"
-          fill="#ddd6c8"
-          stroke="#b8b09f"
-          strokeWidth="1.2"
-        />
-
-        {/* Coastline accent */}
-        <path
-          d="M 195 70 C 210 110, 225 155, 220 200 C 215 250, 205 290, 185 325"
-          fill="none"
-          stroke="#a89f8e"
-          strokeWidth="1"
-          strokeDasharray="3 4"
-        />
-        <path
-          d="M 520 200 C 545 230, 560 270, 555 320"
-          fill="none"
-          stroke="#a89f8e"
-          strokeWidth="1"
-          strokeDasharray="3 4"
-        />
-
-        {/* Trade lane */}
-        <path
-          d={quadraticPath(originPt.x, originPt.y, destPt.x, destPt.y)}
-          fill="none"
-          stroke={laneColor}
-          strokeWidth={compact ? 2 : 2.5}
-          strokeLinecap="round"
-          opacity={0.85}
-        />
-        {/* Directional dash overlay */}
-        <path
-          d={quadraticPath(originPt.x, originPt.y, destPt.x, destPt.y)}
-          fill="none"
-          stroke="#faf8f3"
-          strokeWidth={1}
-          strokeDasharray="6 8"
-          opacity={0.6}
-        />
-
-        {/* Australia origin marker */}
-        <circle
-          cx={originPt.x}
-          cy={originPt.y}
-          r={compact ? 4 : 5.5}
-          fill="#3d4a3c"
-          stroke="#faf8f3"
-          strokeWidth="1.5"
-        />
-        {!compact && (
-          <text
-            x={originPt.x}
-            y={originPt.y + 16}
-            textAnchor="middle"
-            className="map-label"
-            fill="#4a463e"
-            fontSize="10"
+          {/* Origin marker */}
+          <AdvancedMarker
+            position={originPt}
+            title={`Origin: ${originPt.label}`}
           >
-            {originPt.label}
-          </text>
-        )}
-
-        {/* India ports */}
-        {INDIA_PORTS.map((id) => {
-          const coord = PORT_COORDS[id]
-          if (!coord) return null
-          const port = portById.get(id)
-          const level = port
-            ? congestionToRisk(port.baseline_congestion_index)
-            : ('MEDIUM' as RiskLevel)
-          const isHighlighted = highlightSet ? highlightSet.has(id) : true
-          const isSelected = selectedPortId === id
-          const r = isSelected ? 7 : compact ? 3.5 : 5
-
-          return (
-            <g
-              key={id}
-              className="map-port"
-              style={{ cursor: onPortClick ? 'pointer' : 'default', opacity: isHighlighted ? 1 : 0.25 }}
-              onMouseEnter={() => setHoverId(id)}
-              onMouseLeave={() => setHoverId(null)}
-              onClick={() => onPortClick?.(id)}
+            <div
+              className="freight-map-marker freight-map-marker-origin"
+              title={originPt.label}
             >
-              <circle
-                cx={coord.x}
-                cy={coord.y}
-                r={r + 3}
-                fill="transparent"
-              />
-              <circle
-                cx={coord.x}
-                cy={coord.y}
-                r={r}
-                fill={riskColor(level)}
-                stroke={isSelected ? '#292824' : '#faf8f3'}
-                strokeWidth={isSelected ? 2 : 1.2}
-              />
-              {!compact && (
-                <text
-                  x={coord.x - 10}
-                  y={coord.y + 4}
-                  textAnchor="end"
-                  fill="#4a463e"
-                  fontSize="9"
+              <span className="marker-dot" />
+            </div>
+          </AdvancedMarker>
+
+          {/* Destination marker */}
+          <AdvancedMarker
+            position={destPt}
+            title={`Destination: ${destPt.label}`}
+          >
+            <div
+              className="freight-map-marker freight-map-marker-destination"
+              title={destPt.label}
+            >
+              <span className="marker-dot" />
+            </div>
+          </AdvancedMarker>
+
+          {/* East Coast India port markers */}
+          {INDIA_PORTS.map((id) => {
+            const coord = getPortCoords(id)
+
+            if (!coord) return null
+
+            const port = portById.get(id)
+
+            const level = port
+              ? congestionToRisk(port.baseline_congestion_index)
+              : ('MEDIUM' as RiskLevel)
+
+            const isHighlighted = highlightSet
+              ? highlightSet.has(id)
+              : true
+
+            const isSelected = selectedPortId === id
+            const markerColor = riskColor(level)
+
+            return (
+              <AdvancedMarker
+                key={id}
+                position={coord}
+                title={coord.label}
+                onClick={() => onPortClick?.(id)}
+              >
+                <div
+                  className="freight-map-port-marker"
+                  style={{
+                    opacity: isHighlighted ? 1 : 0.3,
+                    cursor: onPortClick ? 'pointer' : 'default',
+                  }}
+                  onMouseEnter={() => setHoverId(id)}
+                  onMouseLeave={() => setHoverId(null)}
                 >
-                  {coord.label}
-                </text>
-              )}
-            </g>
-          )
-        })}
+                  <span
+                    className="freight-map-port-dot"
+                    style={{
+                      backgroundColor: markerColor,
+                      borderColor: isSelected
+                        ? '#292824'
+                        : '#ffffff',
+                      width: isSelected ? 16 : 11,
+                      height: isSelected ? 16 : 11,
+                    }}
+                  />
 
-        {/* Region labels */}
-        {!compact && (
-          <>
-            <text x="95" y="55" fill="#8a857a" fontSize="9" fontWeight="600">
-              EAST COAST INDIA
-            </text>
-            <text x="500" y="175" fill="#8a857a" fontSize="9" fontWeight="600">
-              AUSTRALIA
-            </text>
-            <text x="300" y="250" fill="#7a9a92" fontSize="10" textAnchor="middle">
-              Indian Ocean
-            </text>
-          </>
-        )}
-      </svg>
+                  {!compact && (
+                    <span className="freight-map-port-label">
+                      {coord.label}
+                    </span>
+                  )}
+                </div>
+              </AdvancedMarker>
+            )
+          })}
 
-      {hoverPort && hoverCoord && !compact && (
-        <div
-          className="map-tooltip"
-          style={{
-            left: `${(hoverCoord.x / 640) * 100}%`,
-            top: `${(hoverCoord.y / 420) * 100}%`,
-          }}
-        >
-          <strong>{hoverPort.port_name}</strong>
-          <span>
-            Congestion:{' '}
-            {congestionToRisk(hoverPort.baseline_congestion_index)} (
-            {hoverPort.baseline_congestion_index.toFixed(2)})
-          </span>
-        </div>
-      )}
+          {/* Port information popup */}
+          {hoverPort && hoverCoord && !compact && (
+            <InfoWindow
+              position={hoverCoord}
+              onCloseClick={() => setHoverId(null)}
+            >
+              <div className="google-map-tooltip">
+                <strong>{hoverPort.port_name}</strong>
+
+                <span>
+                  Congestion:{' '}
+                  {congestionToRisk(
+                    hoverPort.baseline_congestion_index,
+                  )}{' '}
+                  (
+                  {hoverPort.baseline_congestion_index.toFixed(2)})
+                </span>
+              </div>
+            </InfoWindow>
+          )}
+        </GoogleMap>
+      </APIProvider>
 
       <p className="map-caption">
-        Prototype trade-lane visualization – not a navigational chart.
+        Maritime trade-lane visualization using geographic port
+        coordinates. Route line is a prototype trade corridor, not a
+        navigational route.
       </p>
     </div>
   )

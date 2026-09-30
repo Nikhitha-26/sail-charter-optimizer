@@ -1,3 +1,5 @@
+/**frontend/src/App.css App shell*/
+
 .app-shell {
   display: flex;
   min-height: 100vh;
@@ -1316,3 +1318,480 @@
     padding: 28px 24px 50px;
   }
 }
+/* =========================================================
+   DARK NAVY / BLUE / PURPLE VISUAL THEME
+   Visual-only override — no functionality changes
+   ========================================================= */
+
+   .app-shell {
+    color: #eef3ff;
+    background: #061226;
+  }
+  
+  /* ---------- Sidebar ---------- */
+  
+  .sidebar {
+    background: #07172f;
+    border-right-color: #18345c;
+  }
+  
+  .brand-mark {
+    background: #0b1d3a;
+    border-color: #294979;
+    color: #dce7ff;
+  }
+  
+  .brand-subtitle {
+    color: #7182a3;
+  }
+  
+  .nav-section-label {
+    color: #65799e;
+  }
+  
+  .nav-item {
+    color: #9eafd0;
+  }
+  
+  .nav-item:hover {
+    background: #102852;
+    color: #eef3ff;
+  }
+  
+  .nav-item.active {
+    background: linear-gradient(90deg, #172f6b, #251d5c);
+    color: #ffffff;
+  }
+  
+  .system-status {
+    color: #7182a3;
+  }
+  
+  .version {
+    color: #56698c;
+  }
+  
+  /* ---------- Main ---------- */
+  
+  .main-content {
+    background: #061226;
+  }
+  
+  .topbar {
+    background: rgba(7, 23, 47, 0.92);
+    border-bottom-color: #18345c;
+  }
+  
+  .breadcrumb {
+    color: #718fd1;
+  }
+  
+  .topbar-meta {
+    color: #8295b8;
+  }
+  
+  .date {
+    border-left-color: #24436f;
+  }
+  
+  .page-content {
+    background: #061226;
+  }
+  
+  .welcome-block h2,
+  .page-section h2,
+  .topbar h1 {
+    color: #f3f6ff;
+  }
+  
+  .eyebrow {
+    color: #7193e8;
+  }
+  
+  .intro {
+    color: #91a2c2;
+  }
+  
+  /* ---------- Overview cards ---------- */
+  
+  .overview-card {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  .card-label {
+    color: #7182a3;
+  }
+  
+  .overview-card strong {
+    color: #eef3ff;
+  }
+  
+  .card-note {
+    color: #8295b8;
+  }
+  
+  /* ---------- Sections ---------- */
+  
+  .section-heading {
+    border-bottom-color: #18345c;
+  }
+  
+  .section-note {
+    color: #7182a3;
+  }
+  
+  .workflow {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  .workflow-step span {
+    color: #63779b;
+  }
+  
+  .workflow-step p {
+    color: #8295b8;
+  }
+  
+  .workflow-line {
+    background: #18345c;
+  }
+  
+  /* ---------- Backend / context banners ---------- */
+  
+  .backend-banner {
+    background: #101e38;
+    border-bottom-color: #243f69;
+    color: #a9b9d7;
+  }
+  
+  .banner-retry {
+    background: #0b1d3a;
+    border-color: #294979;
+    color: #b8c7e2;
+  }
+  
+  .decision-context-bar {
+    background: #08172f;
+    border-bottom-color: #18345c;
+  }
+  
+  .dcb-summary-text {
+    color: #b5c4df;
+  }
+  
+  .dcb-editor label,
+  .selector-form label {
+    color: #8295b8;
+  }
+  
+  /* ---------- Inputs ---------- */
+  
+  .dcb-editor select,
+  .dcb-editor input,
+  .selector-form select,
+  .selector-form input {
+    background: #0a1932;
+    border-color: #24436f;
+    color: #eef3ff;
+  }
+  
+  .dcb-editor select:focus,
+  .dcb-editor input:focus,
+  .selector-form select:focus,
+  .selector-form input:focus {
+    border-color: #7657e8;
+    outline: none;
+  }
+  
+  /* ---------- Buttons ---------- */
+  
+  .btn-primary {
+    border-color: #7657e8;
+    background: #7657e8;
+    color: #ffffff;
+  }
+  
+  .btn-primary:hover {
+    background: #6548d4;
+  }
+  
+  .btn-secondary {
+    border-color: #294979;
+    background: #0b1d3a;
+    color: #c5d2eb;
+  }
+  
+  .btn-ghost {
+    color: #8fa2c5;
+  }
+  
+  .btn-ghost:hover {
+    color: #eef3ff;
+    background: #102852;
+  }
+  
+  .link-btn {
+    color: #829cff;
+  }
+  
+  .prototype-badge {
+    background: #171b42;
+    border-color: #4a4d91;
+    color: #a9a7ff;
+  }
+  
+  /* ---------- Metrics ---------- */
+  
+  .metric-card {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  .metric-card span {
+    color: #7182a3;
+  }
+  
+  .metric-card strong {
+    color: #f1f5ff;
+  }
+  
+  .metric-card small {
+    color: #8295b8;
+  }
+  
+  /* ---------- Panels / charts / cards ---------- */
+  
+  .panel-card,
+  .chart-card,
+  .scenario-card,
+  .strategy-card {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  .panel-card h3,
+  .chart-card h3,
+  .scenario-card h3,
+  .strategy-card h3 {
+    color: #edf2ff;
+  }
+  
+  .inline-note,
+  .muted {
+    color: #8295b8;
+  }
+  
+  .selector-form {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  /* ---------- Maps ---------- */
+  
+  .context-map-pane {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  .map-toggle-btn {
+    background: #0b1d3a;
+    border-color: #294979;
+    color: #b8c7e2;
+  }
+  
+  .freight-map {
+    background: #07172f;
+    border-color: #18345c;
+  }
+  
+  .map-caption {
+    background: #0b1d3a;
+    border-top-color: #18345c;
+    color: #7182a3;
+  }
+  
+  .map-tooltip {
+    background: #0b1d3a;
+    border-color: #294979;
+    color: #eef3ff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+  
+  .map-tooltip span {
+    color: #8295b8;
+  }
+  
+  .side-drawer {
+    background: #08172f;
+    border-color: #18345c;
+  }
+  
+  .icon-btn {
+    color: #8fa2c5;
+  }
+  
+  .port-detail dt {
+    color: #7182a3;
+  }
+  
+  .port-compat {
+    border-top-color: #18345c;
+  }
+  
+  .source-note {
+    color: #5f7192;
+  }
+  
+  /* ---------- Dashboard ---------- */
+  
+  .dashboard-route {
+    border-bottom-color: #18345c;
+  }
+  
+  .attention-list li {
+    color: #a9b9d7;
+  }
+  
+  .modal-backdrop {
+    background: rgba(0, 8, 24, 0.68);
+  }
+  
+  .modal-panel {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  /* ---------- Accordion ---------- */
+  
+  .accordion {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  .accordion-trigger {
+    color: #d8e2f6;
+  }
+  
+  .accordion-body {
+    border-top-color: #18345c;
+  }
+  
+  /* ---------- Risk ---------- */
+  
+  .whatif-panel {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  .toggle-chip {
+    background: #0a1932;
+    border-color: #294979;
+    color: #9eafd0;
+  }
+  
+  .toggle-chip.on {
+    background: #182d5c;
+    border-color: #7657e8;
+    color: #dfe5ff;
+  }
+  
+  .toggle-chip input {
+    accent-color: #7657e8;
+  }
+  
+  .scenario-card {
+    border-top-color: #7657e8;
+  }
+  
+  .scenario-card dt,
+  .cost-dl dt {
+    color: #7182a3;
+  }
+  
+  .risk-matrix .rm-axis,
+  .risk-matrix .rm-axis-y {
+    color: #7182a3;
+  }
+  
+  .rm-cell {
+    background: #101f3a;
+    border-color: #18345c;
+    color: #7182a3;
+  }
+  
+  /* ---------- Optimizer ---------- */
+  
+  .mix-bar-label,
+  .risk-profile-row {
+    color: #8295b8;
+  }
+  
+  .mix-bar-track {
+    background: #142746;
+  }
+  
+  .best-if {
+    color: #9aabcd;
+  }
+  
+  /* ---------- Tables ---------- */
+  
+  .table-scroll {
+    background: #0b1d3a;
+    border-color: #18345c;
+  }
+  
+  .data-table th {
+    background: #0f2344;
+    border-bottom-color: #18345c;
+    color: #7182a3;
+  }
+  
+  .data-table td {
+    border-bottom-color: #162f52;
+    color: #b9c8e2;
+  }
+  
+  .data-table tbody tr:hover {
+    background: #102852;
+  }
+  
+  .data-table tbody tr.row-active {
+    background: #182d5c;
+  }
+  
+  /* ---------- Decisions ---------- */
+  
+  .rationale-list {
+    color: #9eafd0;
+  }
+  
+  .mix-inline,
+  .vessel-mix {
+    color: #8295b8;
+  }
+  
+  /* ---------- Skeleton ---------- */
+  
+  .skeleton-row {
+    background: linear-gradient(
+      90deg,
+      #0b1d3a,
+      #162d50,
+      #0b1d3a
+    );
+  }
+  
+  /* ---------- Error panel ---------- */
+  
+  .error-panel {
+    background: #0b1d3a;
+    border-color: #18345c;
+    color: #8295b8;
+  }
+  
+  /* =========================================================
+     END DARK THEME
+     ========================================================= */

@@ -1,3 +1,5 @@
+"""backend/scenarios/generate_scenarios.py generate freight scenarios"""
+
 import pandas as pd
 from pathlib import Path
 

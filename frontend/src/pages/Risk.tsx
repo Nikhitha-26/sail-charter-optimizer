@@ -1,3 +1,5 @@
+/**frontend/src/pages/Risk.tsx Risk page*/
+import { formatINR, formatINRPerTonne } from '../lib/currency'
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { api } from '../lib/api'
 import { normalizeRisk, riskColor } from '../lib/constants'
@@ -225,15 +227,15 @@ export default function Risk() {
               <dl>
                 <div>
                   <dt>Freight</dt>
-                  <dd>${s.freight.toFixed(2)} / MT</dd>
+                  <dd>{formatINRPerTonne(s.freight)}</dd>
                 </div>
                 <div>
                   <dt>Voyage cost</dt>
-                  <dd>${Math.round(s.voyageCost).toLocaleString()}</dd>
+                  <dd>{formatINR(s.voyageCost)}</dd>
                 </div>
                 <div>
                   <dt>Exposure</dt>
-                  <dd>${Math.round(s.exposure).toLocaleString()}</dd>
+                  <dd>{formatINR(s.exposure)}</dd>
                 </div>
                 <div>
                   <dt>Idle risk</dt>

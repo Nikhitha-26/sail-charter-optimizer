@@ -1,21 +1,42 @@
+"""backend/ml/multi_horizon_forecast.py multi-horizon forecast model"""
+
 import pandas as pd
 import numpy as np
 import joblib
 
-from data_loader import (
-    load_freight_rates,
-    load_market_factors
-)
-
-from features import create_forecasting_dataset
+try:
+    from .data_loader import (
+        load_freight_rates,
+        load_market_factors,
+    )
+    from .features import create_forecasting_dataset
+except ImportError:
+    from data_loader import (
+        load_freight_rates,
+        load_market_factors,
+    )
+    from features import create_forecasting_dataset
 
 
 # =========================================================
 # Configuration
 # =========================================================
 
-MODEL_PATH = "models/freight_forecast_xgb.pkl"
-PREPROCESSOR_PATH = "models/freight_preprocessor.pkl"
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+MODEL_PATH = (
+    PROJECT_ROOT
+    / "models"
+    / "freight_forecast_xgb.pkl"
+)
+
+PREPROCESSOR_PATH = (
+    PROJECT_ROOT
+    / "models"
+    / "freight_preprocessor.pkl"
+)
 
 FORECAST_HORIZONS = [7, 30, 90]
 

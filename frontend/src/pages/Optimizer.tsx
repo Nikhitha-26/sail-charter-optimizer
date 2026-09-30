@@ -1,3 +1,5 @@
+/**frontend/src/pages/Optimizer.tsx Optimizer page*/
+import { formatINR } from '../lib/currency'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
@@ -288,14 +290,11 @@ export default function Optimizer() {
                   <dl className="cost-dl">
                     <div>
                       <dt>Base cost</dt>
-                      <dd>${Math.round(s.baseCostUsd).toLocaleString()}</dd>
+                      <dd>{formatINR(s.baseCostUsd)}</dd>
                     </div>
                     <div>
                       <dt>Low / High</dt>
-                      <dd>
-                        ${Math.round(s.lowCostUsd).toLocaleString()} / $
-                        {Math.round(s.highCostUsd).toLocaleString()}
-                      </dd>
+                      <dd>{formatINR(s.baseCostUsd)}</dd>
                     </div>
                   </dl>
                   <div className="risk-profile-row">

@@ -1,3 +1,5 @@
+/**frontend/src/components/map/ContextMapPanel.tsx Context map panel component */
+
 import { useEffect, useMemo, useState } from 'react'
 import type { DecisionContextState } from '../../store/decisionContext'
 import type { Port, RiskLevel, Vessel } from '../../types/api'
